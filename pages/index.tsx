@@ -3,13 +3,15 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import {Button, LinearProgress} from '@mui/material';
 import {Formik, Form, Field, FormikHelpers} from 'formik';
-import {TextField as MuiTextField} from '@mui/material';
 import {TextField} from 'formik-mui';
 import * as Yup from 'yup';
 import { IMaskMixin} from "react-imask";
-import {ReactElement} from "react";
 
-const MaskedInput = IMaskMixin(TextField);
+// const MyMaskedInput  = IMaskMixin(TextField);
+
+const InternalMaskTextField = IMaskMixin((props) => (
+  <TextField  {...props as any}/>
+))
 
 interface Values {
   name: string;
@@ -21,6 +23,7 @@ const Home: NextPage = () => {
 
   const SignupSchema = Yup.object().shape({
     name: Yup.string()
+      .matches(/^(([0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2}))$/, 'cpf')
       .min(2, 'Too Short!')
       .max(50, 'Too Long!')
       .required('Required'),
@@ -69,7 +72,7 @@ const Home: NextPage = () => {
               <Field
                 name="name"
                 label="Name"
-                component={MaskedInput}
+                component={InternalMaskTextField}
                 mask={'000.000.000-00'}
                 margin="normal"
                 variant="filled"
